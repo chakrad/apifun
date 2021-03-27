@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+	<title>F1 Victor Statistics</title>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="style.css">
+	<style type = "text/css">
+           body{
+           		text-align: center;
+           }
+    </style>
+	<script>
+		// USE get_weather_ajax - posted.html file us reference
+		function getCovidStat() {
+			request = new XMLHttpRequest();
+			console.log("1 - request object created");
+ 
+		request.open("GET", "https://www.balldontlie.io/api/v1/stats?dates[]=2019-10-30&per_page=100", true)
+
+			console.log("2 - opened request file");
+ 
+			
+			// set up event handler
+			request.onreadystatechange = function() {
+				console.log("3 - readystatechange event fired.");
+ 
+				if (request.readyState == 4 && request.status == 200) {
+
+					//print the data after successful requst
+					console.log("5 - response received");
+					result = request.responseText;
+					statistic = JSON.parse(result);
+
+					input = "";
+					//alert("asdf");
+					//input = "<h2> Date: " + statistic[0]["date"] + "<br></h2>";
+					//input = statistic["data"][0]["id"];
+					//alert(input);
+					input = "Game played on " + statistic["data"][0]["game"]["date"];
+					input += "</br> This api is called balldontlie and is a free open source api that provides nba related data";
+					input += "</br> The website is balldontlie.io";
+					input += "</br> The options I used were dates(Oct 30 2019) and the results per page(100)";
+					input += "</br>This data could be useful to both scouts/managers and fans who want to see more about teams' or players' performances";
+					//alert(input);
+					statistic["data"].forEach(function(id) { 
+						input += "<h3> Name: " + id["player"]["first_name"] + " " + id["player"]["last_name"] + 
+						" </br> Height: " + id["player"]["height_feet"] + "ft " + id["player"]["height_inches"] + "in </br> # of Points: " + id["pts"]  
+						+ "      ; # of Rebounds: " + id["reb"]+ " ; # of Assists: "  + id["ast"] +  
+						" </br> Time played: " + id["min"] + " </br> Team: " + id["team"]["full_name"] + 
+						 "</h3> <hr>  " ; 
+
+					})
+					
+					document.getElementById("data").innerHTML = input;
+					
+				}
+				else if (request.readyState == 4 && request.status != 200) {
+
+					document.getElementById("data").innerHTML = "Something is wrong!  Check the logs to see where this went off the rails";
+
+				}
+
+				else if (request.readyState == 3) {
+
+					document.getElementById("data").innerHTML = "Too soon!  Try again";
+
+				}
+
+			}
+		// Step 4: fire off the HTTP request
+			request.send();
+			console.log("4 - Request sent");
+		}
+	</script>
+</head>
+
+
+<body onload="getCovidStat()">
+
+	<h1>NBA Player Statistics in Single Game</h1>
+	<div id="data">Loading...</div>
+</body>
+</html>
